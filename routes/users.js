@@ -28,7 +28,7 @@ router.post(`/`, async (req, resp) => {
   let user = new User({
     name: req.body.name,
     email: req.body.email,
-    passwordHash: bcrypt.hashSync(req.body.passwordHash, 10), //secret
+    passwordHash: bcrypt.hashSync(req.body.passwordHash, india), //secret
     street: req.body.street,
     apartment: req.body.apartment,
     city: req.body.city,
@@ -58,14 +58,35 @@ router.post(`/login`, async (req, resp) => {
       {
         userId: user.id,
       },
-      secret
-      ,{expiresIn: '1d'}
+      secret,
+      { expiresIn: "1d" }
     );
 
     resp.status(200).send({ user: user.email, token: token });
   } else {
     return resp.status(400).send("The Password is wrong");
   }
+});
+
+router.post(`/register`, async (req, resp) => {
+  let user = new User({
+    name: req.body.name,
+    email: req.body.email,
+    passwordHash: bcrypt.hashSync(req.body.passwordHash, india), //secret
+    street: req.body.street,
+    apartment: req.body.apartment,
+    city: req.body.city,
+    zip: req.body.zip,
+    country: req.body.country,
+    phone: req.body.phone,
+    isAdmin: req.body.isAdmin,
+  });
+  user = await user.save();
+
+  if (!user) {
+    return resp.status(500).send("The User cannot be create !!");
+  }
+  resp.send(user);
 });
 
 module.exports = router;
